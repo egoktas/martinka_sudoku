@@ -1,0 +1,159 @@
+<html>
+<head>
+<title> test page </title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/fontawesome.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.10.2/underscore.min.js"></script>
+<!-- <script type="module" src="http://localhost:8000/js/logic-solver.js"></script> -->
+<!-- <script type="module" src="http://localhost:8000/js/martinka_sudoku_generator.js"></script> -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="module">
+  import {Logic} from './js/logic-solver.js'
+  console.log('Logic', Logic)
+
+  import {find_martinka_sudoku_min_arrows} from './js/martinka_sudoku_generator.js'
+  console.log('find_martinka_sudoku_min_arrows', find_martinka_sudoku_min_arrows)
+
+/*
+  - start with all water: 81 cells
+  - aim for 37-40 land cells
+constraints:
+  - land cells at most 9 connected cells
+  - all.. TODO..
+*/
+
+function generateMartinkaSudoku() {
+  if (1) {
+/*
+  return {
+    grid: [
+      // 0: no direction, 1: top, 2: right, 3: bottom, 4: left
+      [0, 4, 2, 4, 0, 3, 0, 0, 0],
+      [2, 0, 0, 0, 0, 1, 3, 0, 0],
+      [0, 1, 0, 0, 0, 3, 0, 2, 0],
+      [0, 2, 4, 0, 0, 0, 1, 3, 4],
+      [0, 1, 0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 3, 1, 0, 0, 0, 4, 0],
+      [3, 0, 0, 1, 0, 0, 0, 0, 0],
+      [0, 0, 3, 0, 2, 0, 4, 0, 1],
+      [0, 0, 0, 0, 1, 4, 2, 0, 0],
+    ] 
+  };
+*/
+  } else {
+  return {
+    grid: [
+      // 0: no direction, 1: top, 2: right, 3: bottom, 4: left
+      [3,2,0,3,0,3,0,3,3],
+      [2,3,0,0,0,0,0,3,4],
+      [0,0,0,0,0,2,0,0,0],
+      [3,3,0,0,1,0,0,3,1],
+      [0,0,0,0,0,4,0,0,0],
+      [2,2,0,0,3,0,0,4,4],
+      [0,0,0,1,0,2,0,0,0],
+      [2,0,0,0,0,0,1,0,4],
+      [1,1,0,1,0,1,0,4,1],
+    ] 
+  };
+  }
+}
+
+function fetchMartinkaSudoku(callback) {
+  return $.get("http://localhost:3000/martinka_sudoku", callback, "json");
+}
+
+const arrowClassMapping = {
+  0: '',
+  1: ' class="arrow arrow-up"',
+  2: ' class="arrow arrow-right"',
+  3: ' class="arrow arrow-down"',
+  4: ' class="arrow arrow-left"',
+}
+function addPuzzle(ms) {
+  let $table = $('<table class="sudoku-table" />')
+  for (var i = 0; i < 9; i++) {
+    let $row = $('<tr/>')
+    for (var j = 0; j < 9; j++) {
+      let direction = ms[i][j]
+      $row.append('<td'+arrowClassMapping[direction]+'><div/></td>')
+    }
+    $table.append($row)
+  }
+  $table.find('td').click(cellClicked)
+  $('.sudoku-puzzle').html($table)
+}
+
+function addSolution(arrowGrid, numberGrid, islandsGrid) {
+  let $table = $('<table class="sudoku-table" />')
+  for (var i = 0; i < 9; i++) {
+    let $row = $('<tr/>')
+    for (var j = 0; j < 9; j++) {
+      let direction = arrowGrid[i][j]
+      let bgStyle;
+      if (islandsGrid[i][j] == 0) {
+        bgStyle = ' style="background-color:lightblue"';
+      } else {
+        bgStyle = ' style="background-color:lightgreen"';
+      }
+      $row.append('<td'+arrowClassMapping[direction]+bgStyle+'><div>'+numberGrid[i][j]+'</div></td>')
+    }
+    $table.append($row)
+  }
+  $table.find('td').click(cellClicked)
+  $('.sudoku-solution').html($table)
+  $('.sudoku-solution').addClass('hidden')
+}
+
+function createMartinkaSudokuTables(m) {
+  console.log(m)
+
+  addPuzzle(m.martinka_sudoku)
+  addSolution(m.martinka_sudoku, m.solution.numbers, m.solution.islands)
+
+  console.log('generated new sudoku')
+}
+
+var xhr;
+window.newMartinkaSudoku = function newMartinkaSudoku() {
+  console.log("Logic", Logic)
+  createMartinkaSudokuTables(find_martinka_sudoku_min_arrows(27));
+
+  //if (xhr) xhr.abort()
+  //xhr = fetchMartinkaSudoku(createMartinkaSudokuTables)
+  //xhr.fail()
+  //xhr.fail(function(jqXHR, textStatus, errorThrown) {
+  //  console.log(jqXHR)
+  //  alert('error ' + textStatus + " " + errorThrown);
+  //})
+}
+
+function cellClicked(e) {
+  let $currentTarget = $(e.currentTarget)
+  $currentTarget.css('background-color', 'yellow')
+}
+
+window.toggleArrowHighlight = function toggleArrowHighlight() {
+  $('.arrow').toggleClass('highlight-arrow');
+}
+window.toggleSolution = function toggleSolution() {
+  $('.sudoku-solution').toggleClass('hidden');
+}
+</script>
+</head>
+<body>
+
+<div>
+<button onclick="newMartinkaSudoku()">Create new sudoku</button>
+<button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+<button onclick="toggleSolution()">Toggle solution</button>
+</div>
+
+<div class="sudoku-puzzle">
+</div>
+<div class="sudoku-solution hidden">
+</div>
+
+</body>
+</html>
