@@ -16,13 +16,21 @@ console.log('Logic', Logic)
 import {find_martinka_sudoku_min_arrows} from './js/martinka_sudoku_generator.js'
 console.log('find_martinka_sudoku_min_arrows', find_martinka_sudoku_min_arrows)
 
-/*
-  - start with all water: 81 cells
-  - aim for 37-40 land cells
-constraints:
-  - land cells at most 9 connected cells
-  - all.. TODO..
-*/
+var selectedCells = new Set()
+var selectCellOnHover = false
+
+function clearSelectedCells() {
+  selectedCells.forEach(function($cell) {
+    $cell.removeClass('cell-selected')
+  })
+  selectedCells.clear()
+}
+
+function addToSelectedCells($cell) {
+  console.log($cell)
+  $cell.addClass('cell-selected')
+  selectedCells.add($cell)
+}
 
 function generateMartinkaSudoku() {
   if (1) {
@@ -58,10 +66,6 @@ function generateMartinkaSudoku() {
     ] 
   };
   }
-}
-
-function fetchMartinkaSudoku(callback) {
-  return $.get("http://localhost:3000/martinka_sudoku", callback, "json");
 }
 
 const arrowClassMapping = {
@@ -117,33 +121,29 @@ function createMartinkaSudokuTables(m) {
   console.log('generated new sudoku')
 }
 
-var xhr;
 window.newMartinkaSudoku = function newMartinkaSudoku() {
   console.log("Logic", Logic)
   createMartinkaSudokuTables(find_martinka_sudoku_min_arrows(27));
-
-  //if (xhr) xhr.abort()
-  //xhr = fetchMartinkaSudoku(createMartinkaSudokuTables)
-  //xhr.fail()
-  //xhr.fail(function(jqXHR, textStatus, errorThrown) {
-  //  console.log(jqXHR)
-  //  alert('error ' + textStatus + " " + errorThrown);
-  //})
 }
 
 function processMouseDownInCellEvent(e) {
-  let $target = $(e.target)
-  $target.closest('.cell-layers-container').toggleClass('cell-selected');
-  console.log('mousedown', $target)
+  selectCellOnHover = true
+  let $layersContainer = $(e.target).closest('.cell-layers-container')
+  console.log('mousedown', $layersContainer[0])
+  clearSelectedCells()
+  addToSelectedCells($layersContainer)
 }
 
 function processHoverCellEvent(e) {
-  let $target = $(e.target)
-  console.log('hovered', $target)
+  if (!selectCellOnHover) return
+  let $layersContainer = $(e.target).closest('.cell-layers-container')
+  console.log('hovered', $layersContainer[0])
+  addToSelectedCells($layersContainer)
 }
 function processMouseUpInBodyEvent(e) {
   let $target = $(e.target)
-  console.log('mouseup', $target)
+  console.log('mouseup', $target[0])
+  selectCellOnHover = false
 }
 
 window.toggleArrowHighlight = function toggleArrowHighlight() {
