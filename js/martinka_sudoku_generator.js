@@ -190,6 +190,39 @@ function expand_to_island(row, col, grid, landCells, waterCells, cellToIslandMap
   })
 }
 
+function getWaterCellsInSquares(waterCells) {
+  var waterCellsInSquares = new Set();
+  for (var i = 0; i < SUDOKU_DIMENSION_SIZE-1; i++) {
+    for (var j = 0; j < SUDOKU_DIMENSION_SIZE-1; j++) {
+      var leftTop = get_cell_number(i, j);
+      if (!waterCells.has(leftTop)) {
+        continue
+      }
+
+      var rightTop = get_cell_number(i, j+1);
+      if (!waterCells.has(rightTop)) {
+        continue
+      }
+
+      var leftBottom = get_cell_number(i+1, j);
+      if (!waterCells.has(leftBottom)) {
+        continue
+      }
+
+      var rightBottom = get_cell_number(i+1, j+1);
+      if (!waterCells.has(rightBottom)) {
+        continue
+      }
+
+      waterCellsInSquares.add(leftTop)
+      waterCellsInSquares.add(rightTop)
+      waterCellsInSquares.add(leftBottom)
+      waterCellsInSquares.add(rightBottom)
+    }
+  }
+  return waterCellsInSquares
+}
+
 function generate_islands() {
   // all waters connected
   // all lands distinct value
@@ -211,10 +244,9 @@ function generate_islands() {
   console.log('')
   console.log('start island generation')
   var attempts = 0
-  while (landCells.size < 37) {
-    //var row = Math.floor(Math.random() * SUDOKU_DIMENSION_SIZE);
-    //var col = Math.floor(Math.random() * SUDOKU_DIMENSION_SIZE);
-    var cell = getRandomItem(waterCells)
+  var waterCellsInSquares = getWaterCellsInSquares(waterCells)
+  while (waterCellsInSquares.size > 0) {
+    var cell = getRandomItem(waterCellsInSquares)
     var row = Math.floor(cell/SUDOKU_DIMENSION_SIZE)
     var col = cell%SUDOKU_DIMENSION_SIZE
 
@@ -232,6 +264,8 @@ function generate_islands() {
       cellToIslandMapping = {}
       attempts = 0
     }
+
+    waterCellsInSquares = getWaterCellsInSquares(waterCells)
   }
   console.log('attempts', attempts)
   console.log('done island generation')
@@ -417,14 +451,14 @@ function generate_martinka_sudoku(minArrows) {
   add_islands_constraints(solver, gridVars, islandsSet);
   //print_sudoku_solution(solver.solve(), gridVars);
 
-  var islandsGrid = islands_to_grid(islandsSet)
-  var solution = solver.solve()
-  if (solution == null) {
+  var solver_solution = solver.solve()
+  if (solver_solution == null) {
     console.log('out of solutions')
     return null
   }
 
-  var numbersGrid = sudoku_solution_to_grid(solution, gridVars)
+  var numbersGrid = sudoku_solution_to_grid(solver_solution, gridVars)
+  var islandsGrid = islands_to_grid(islandsSet)
   var arrowGrid = create_grid_with_arrows(numbersGrid, islandsGrid)
 
   var arrowCount = count_non_zeros(arrowGrid)
