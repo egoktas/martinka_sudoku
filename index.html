@@ -27,7 +27,6 @@ function clearSelectedCells() {
 }
 
 function addToSelectedCells($cell) {
-  console.log($cell)
   $cell.addClass('cell-selected')
   selectedCells.add($cell)
 }
@@ -85,8 +84,8 @@ function addPuzzle(ms) {
     }
     $table.append($row)
   }
-  $table.find('.cell-overlay').on("mousedown", processMouseDownInCellEvent)
-  $table.find('.cell-overlay').hover(processHoverCellEvent)
+  $table.find('td').on("mousedown", processMouseDownInCellEvent)
+  $table.find('td').hover(processHoverCellEvent)
   $('.sudoku-puzzle').html($table)
 }
 
@@ -106,8 +105,6 @@ function addSolution(arrowGrid, numberGrid, islandsGrid) {
     }
     $table.append($row)
   }
-  $table.find('.cell-overlay').on("mousedown", processMouseDownInCellEvent)
-  $table.find('.cell-overlay').hover(processHoverCellEvent)
   $('.sudoku-solution').html($table)
   $('.sudoku-solution').addClass('hidden')
 }
@@ -127,23 +124,27 @@ window.newMartinkaSudoku = function newMartinkaSudoku() {
 }
 
 function processMouseDownInCellEvent(e) {
+  e.stopPropagation()
   selectCellOnHover = true
-  let $layersContainer = $(e.target).closest('.cell-layers-container')
-  console.log('mousedown', $layersContainer[0])
+  let $layersContainer = $(e.currentTarget).find('.cell-layers-container')
   clearSelectedCells()
   addToSelectedCells($layersContainer)
 }
 
 function processHoverCellEvent(e) {
   if (!selectCellOnHover) return
-  let $layersContainer = $(e.target).closest('.cell-layers-container')
-  console.log('hovered', $layersContainer[0])
+  let $layersContainer = $(e.currentTarget).find('.cell-layers-container')
   addToSelectedCells($layersContainer)
 }
+
 function processMouseUpInBodyEvent(e) {
   let $target = $(e.target)
-  console.log('mouseup', $target[0])
   selectCellOnHover = false
+}
+
+function processMouseDownInBodyEvent(e) {
+  let $target = $(e.target)
+  clearSelectedCells()
 }
 
 window.toggleArrowHighlight = function toggleArrowHighlight() {
@@ -155,6 +156,7 @@ window.toggleSolution = function toggleSolution() {
 
 window.bodyInit = function bodyInit() {
   $("body").on("mouseup", processMouseUpInBodyEvent)
+  $("body").on("mousedown", processMouseDownInBodyEvent)
 }
 </script>
 </head>
