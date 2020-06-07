@@ -154,9 +154,17 @@ window.toggleSolution = function toggleSolution() {
   $('.sudoku-solution').toggleClass('hidden');
 }
 
+function processKeypressInBodyEvent(e) {
+  selectedCells.forEach(function($cell) {
+    $cell.find('.number-layer').html(String.fromCharCode(e.charCode))
+  })
+}
+
 window.bodyInit = function bodyInit() {
   $("body").on("mouseup", processMouseUpInBodyEvent)
   $("body").on("mousedown", processMouseDownInBodyEvent)
+
+  $(document).keypress(processKeypressInBodyEvent);
 }
 </script>
 </head>
