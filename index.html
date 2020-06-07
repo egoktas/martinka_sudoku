@@ -10,11 +10,11 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="module">
-  import {Logic} from './js/logic-solver.js'
-  console.log('Logic', Logic)
+import {Logic} from './js/logic-solver.js'
+console.log('Logic', Logic)
 
-  import {find_martinka_sudoku_min_arrows} from './js/martinka_sudoku_generator.js'
-  console.log('find_martinka_sudoku_min_arrows', find_martinka_sudoku_min_arrows)
+import {find_martinka_sudoku_min_arrows} from './js/martinka_sudoku_generator.js'
+console.log('find_martinka_sudoku_min_arrows', find_martinka_sudoku_min_arrows)
 
 /*
   - start with all water: 81 cells
@@ -77,11 +77,12 @@ function addPuzzle(ms) {
     let $row = $('<tr/>')
     for (var j = 0; j < 9; j++) {
       let direction = ms[i][j]
-      $row.append('<td'+arrowClassMapping[direction]+'><div/></td>')
+      $row.append('<td'+arrowClassMapping[direction]+'><div class="cell-layers-container"><div class="cell-layer arrow-layer"></div><div class="cell-layer number-layer"></div><div class="cell-layer cell-overlay"></div></div></td>')
     }
     $table.append($row)
   }
-  $table.find('td').click(cellClicked)
+  $table.find('.cell-overlay').on("mousedown", processMouseDownInCellEvent)
+  $table.find('.cell-overlay').hover(processHoverCellEvent)
   $('.sudoku-puzzle').html($table)
 }
 
@@ -97,11 +98,12 @@ function addSolution(arrowGrid, numberGrid, islandsGrid) {
       } else {
         bgStyle = ' style="background-color:lightgreen"';
       }
-      $row.append('<td'+arrowClassMapping[direction]+bgStyle+'><div>'+numberGrid[i][j]+'</div></td>')
+      $row.append('<td'+arrowClassMapping[direction]+bgStyle+'><div class="cell-layers-container"><div class="cell-layer arrow-layer"></div><div class="cell-layer number-layer">'+numberGrid[i][j]+'</div><div class="cell-layer cell-overlay"></div></div></td>')
     }
     $table.append($row)
   }
-  $table.find('td').click(cellClicked)
+  $table.find('.cell-overlay').on("mousedown", processMouseDownInCellEvent)
+  $table.find('.cell-overlay').hover(processHoverCellEvent)
   $('.sudoku-solution').html($table)
   $('.sudoku-solution').addClass('hidden')
 }
@@ -129,9 +131,19 @@ window.newMartinkaSudoku = function newMartinkaSudoku() {
   //})
 }
 
-function cellClicked(e) {
-  let $currentTarget = $(e.currentTarget)
-  $currentTarget.css('background-color', 'yellow')
+function processMouseDownInCellEvent(e) {
+  let $target = $(e.target)
+  $target.closest('.cell-layers-container').toggleClass('cell-selected');
+  console.log('mousedown', $target)
+}
+
+function processHoverCellEvent(e) {
+  let $target = $(e.target)
+  console.log('hovered', $target)
+}
+function processMouseUpInBodyEvent(e) {
+  let $target = $(e.target)
+  console.log('mouseup', $target)
 }
 
 window.toggleArrowHighlight = function toggleArrowHighlight() {
@@ -140,9 +152,13 @@ window.toggleArrowHighlight = function toggleArrowHighlight() {
 window.toggleSolution = function toggleSolution() {
   $('.sudoku-solution').toggleClass('hidden');
 }
+
+window.bodyInit = function bodyInit() {
+  $("body").on("mouseup", processMouseUpInBodyEvent)
+}
 </script>
 </head>
-<body>
+<body onload="bodyInit()">
 
 <div>
 <button onclick="newMartinkaSudoku()">Create new sudoku</button>
