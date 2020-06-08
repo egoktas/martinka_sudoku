@@ -77,7 +77,7 @@ function getArrowDivs(directions) {
 }
 
 function addPuzzle(ms) {
-  let $table = $('<table class="sudoku-table" />')
+  let $table = $('<table class="sudoku-table" align="center" />')
   for (var i = 0; i < 9; i++) {
     let $row = $('<tr/>')
     for (var j = 0; j < 9; j++) {
@@ -95,7 +95,7 @@ function addPuzzle(ms) {
 }
 
 function addSolution(arrowGrid, numberGrid, islandsGrid) {
-  let $table = $('<table class="sudoku-table" />')
+  let $table = $('<table class="sudoku-table" align="center" />')
   for (var i = 0; i < 9; i++) {
     let $row = $('<tr/>')
     for (var j = 0; j < 9; j++) {
@@ -207,10 +207,12 @@ window.bodyInit = function bodyInit() {
   <div class="tab-pane fade show active" id="puzzle" role="tabpanel" aria-labelledby="puzzle-tab">
     <div class="row">
       <div class="col-3">
-        <button onclick="newMartinkaSudoku()">Create new sudoku</button>
-        <button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+        <div class="sudoku-controls">
+          <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku()">Create new sudoku</button>
+          <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+        </div>
       </div>
-      <div class="col-9">
+      <div class="col-9 sudoku-container">
         <div class="sudoku-puzzle">
         </div>
       </div>
@@ -219,10 +221,12 @@ window.bodyInit = function bodyInit() {
   <div class="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
     <div class="row">
       <div class="col-3">
-        <button onclick="newMartinkaSudoku()">Create new sudoku</button>
-        <button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+        <div class="sudoku-controls">
+          <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku()">Create new sudoku</button>
+          <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+        </div>
       </div>
-      <div class="col-9">
+      <div class="col-9 sudoku-container">
         <div class="sudoku-solution">
         </div>
       </div>

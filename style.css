@@ -1,3 +1,11 @@
+.sudoku-container {
+  padding: 5px;
+}
+
+.sudoku-controls {
+  padding: 5px;
+}
+
 .sudoku-table {
   border: 3px solid black;
   border-collapse: collapse;
