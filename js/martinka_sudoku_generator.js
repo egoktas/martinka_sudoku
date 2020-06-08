@@ -360,14 +360,19 @@ function add_islands_constraints(solver, gridVars, islandsSet) {
 }
 
 // values in grid:
-// 0 = no arrow
-// 1 = arrow up
-// 2 = arrow right
-// 3 = arrow down
-// 4 = arrow left
+// 0x00 = no arrow
+// 0x01 = arrow up
+// 0x02 = arrow right up
+// 0x04 = arrow right
+// 0x08 = arrow right down
+// 0x10 = arrow down
+// 0x20 = arrow left down
+// 0x40 = arrow left
+// 0x80 = arrow left up
 function get_arrow_direction(row, col, numbersGrid, islandsGrid) {
   var cellKind = islandsGrid[row][col]
   var cellNumber = numbersGrid[row][col]
+  var res = 0
 
   // check upward
   var count = 0
@@ -377,7 +382,18 @@ function get_arrow_direction(row, col, numbersGrid, islandsGrid) {
     }
   }
   if (count == cellNumber) {
-    return 1
+    res |= 0x01
+  }
+
+  // check right up
+  count = 0
+  for (var i = row-1, j = col+1; i >= 0 && j < SUDOKU_DIMENSION_SIZE; i--, j++) {
+    if (islandsGrid[i][j] == cellKind) {
+      count += 1
+    }
+  }
+  if (count == cellNumber) {
+    res |= 0x02
   }
 
   // check to right
@@ -388,7 +404,18 @@ function get_arrow_direction(row, col, numbersGrid, islandsGrid) {
     }
   }
   if (count == cellNumber) {
-    return 2
+    res |= 0x04
+  }
+
+  // check right down
+  count = 0
+  for (var i = row+1, j = col+1; i < SUDOKU_DIMENSION_SIZE && j < SUDOKU_DIMENSION_SIZE; i++, j++) {
+    if (islandsGrid[i][j] == cellKind) {
+      count += 1
+    }
+  }
+  if (count == cellNumber) {
+    res |= 0x08
   }
 
   // check downward
@@ -399,7 +426,18 @@ function get_arrow_direction(row, col, numbersGrid, islandsGrid) {
     }
   }
   if (count == cellNumber) {
-    return 3
+    res |= 0x10
+  }
+
+  // check left down
+  count = 0
+  for (var i = row+1, j = col-1; i < SUDOKU_DIMENSION_SIZE && j >= 0; i++, j--) {
+    if (islandsGrid[i][j] == cellKind) {
+      count += 1
+    }
+  }
+  if (count == cellNumber) {
+    res |= 0x20
   }
 
   // check to left
@@ -410,10 +448,21 @@ function get_arrow_direction(row, col, numbersGrid, islandsGrid) {
     }
   }
   if (count == cellNumber) {
-    return 4
+    res |= 0x40
   }
 
-  return 0
+  // check left up
+  count = 0
+  for (var i = row-1, j = col-1; i >= 0 && j >= 0; i--, j--) {
+    if (islandsGrid[i][j] == cellKind) {
+      count += 1
+    }
+  }
+  if (count == cellNumber) {
+    res |= 0x80
+  }
+
+  return res
 }
 
 function create_grid_with_arrows(numbersGrid, islandsGrid) {

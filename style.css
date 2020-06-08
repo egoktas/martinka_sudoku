@@ -29,13 +29,73 @@
   background-color: gold;
 }
 
-.sudoku-table tr td div.cell-layer {
+.sudoku-table tr td div.cell-layer, .sudoku-table tr td div.arrow, .sudoku-table tr td div.arrow-corner {
   width: 30pt;
   height: 30pt;
   position: absolute;
   top: 0;
   left: 0;
 }
+
+.sudoku-table tr td div.arrow-layer {
+  opacity: 0.5;
+}
+.sudoku-table tr td div.arrow-layer.highlight-arrows {
+  opacity: 1;
+  z-index: 1;
+}
+
+.sudoku-table tr td div.arrow {
+  background-image: url('./img/arrow-up.svg');
+  background-repeat: no-repeat;
+  background-position-x: 10pt;
+  background-position-y: -1pt;
+  background-size: 11pt;
+}
+.sudoku-table tr td div.highlight-arrows div.arrow {
+  background-color: red;
+  background-image: none;
+  -webkit-mask-image: url('./img/arrow-up.svg');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position-x: 7pt;
+  -webkit-mask-position-y: -2pt;
+  -webkit-mask-size: 17pt;
+  mask-image: url('./img/arrow-up.svg');
+  mask-repeat: no-repeat;
+  mask-position-x: 7pt;
+  mask-position-y: -2pt;
+  mask-size: 17pt;
+}
+.sudoku-table tr td div.arrow-corner {
+  background-image: url('./img/arrow-up-right.svg');
+  background-repeat: no-repeat;
+  background-position-x: 20pt;
+  background-position-y: -1pt;
+  background-size: 11pt;
+}
+.sudoku-table tr td div.highlight-arrows div.arrow-corner {
+  background-color: red;
+  background-image: none;
+  -webkit-mask-image: url('./img/arrow-up-right.svg');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position-x: 16pt;
+  -webkit-mask-position-y: -3pt;
+  -webkit-mask-size: 17pt;
+  mask-image: url('./img/arrow-up-right.svg');
+  mask-repeat: no-repeat;
+  mask-position-x: 16pt;
+  mask-position-y: -3pt;
+  mask-size: 17pt;
+}
+
+.sudoku-table tr td div.arrow-up {    transform: rotate(  0deg); }
+.sudoku-table tr td div.arrow-right { transform: rotate( 90deg); }
+.sudoku-table tr td div.arrow-down {  transform: rotate(180deg); }
+.sudoku-table tr td div.arrow-left {  transform: rotate(-90deg); }
+.sudoku-table tr td div.arrow-right-up {   transform: rotate(  0deg); }
+.sudoku-table tr td div.arrow-right-down { transform: rotate( 90deg); }
+.sudoku-table tr td div.arrow-left-down {  transform: rotate(180deg); }
+.sudoku-table tr td div.arrow-left-up {    transform: rotate(-90deg); }
 
 .hidden {
   display: none;

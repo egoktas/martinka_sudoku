@@ -67,20 +67,47 @@ function generateMartinkaSudoku() {
   }
 }
 
-const arrowClassMapping = {
-  0: '',
-  1: ' class="arrow arrow-up"',
-  2: ' class="arrow arrow-right"',
-  3: ' class="arrow arrow-down"',
-  4: ' class="arrow arrow-left"',
+function getArrowDivs(directions) {
+  if (directions == 0) return ''
+
+  let res = ''
+  if (directions & 0x1) {
+    res += '<div class="arrow arrow-up"></div>'
+  }
+  if (directions & 0x2) {
+    res += '<div class="arrow-corner arrow-right-up"></div>'
+  }
+  if (directions & 0x4) {
+    res += '<div class="arrow arrow-right"></div>'
+  }
+  if (directions & 0x8) {
+    res += '<div class="arrow-corner arrow-right-down"></div>'
+  }
+  if (directions & 0x10) {
+    res += '<div class="arrow arrow-down"></div>'
+  }
+  if (directions & 0x20) {
+    res += '<div class="arrow-corner arrow-left-down"></div>'
+  }
+  if (directions & 0x40) {
+    res += '<div class="arrow arrow-left"></div>'
+  }
+  if (directions & 0x80) {
+    res += '<div class="arrow-corner arrow-left-up"></div>'
+  }
+  return res
 }
+
 function addPuzzle(ms) {
   let $table = $('<table class="sudoku-table" />')
   for (var i = 0; i < 9; i++) {
     let $row = $('<tr/>')
     for (var j = 0; j < 9; j++) {
-      let direction = ms[i][j]
-      $row.append('<td'+arrowClassMapping[direction]+'><div class="cell-layers-container"><div class="cell-layer arrow-layer"></div><div class="cell-layer number-layer"></div><div class="cell-layer cell-overlay"></div></div></td>')
+      let directions = ms[i][j]
+      let tdHtml = '<td><div class="cell-layers-container">'
+      tdHtml += '<div class="cell-layer arrow-layer">'+getArrowDivs(directions)+'</div><div class="cell-layer number-layer"></div><div class="cell-layer cell-overlay"></div>'
+      tdHtml += '</div></td>'
+      $row.append(tdHtml)
     }
     $table.append($row)
   }
@@ -94,14 +121,18 @@ function addSolution(arrowGrid, numberGrid, islandsGrid) {
   for (var i = 0; i < 9; i++) {
     let $row = $('<tr/>')
     for (var j = 0; j < 9; j++) {
-      let direction = arrowGrid[i][j]
+      let directions = arrowGrid[i][j]
       let bgStyle;
       if (islandsGrid[i][j] == 0) {
         bgStyle = ' style="background-color:lightblue"';
       } else {
         bgStyle = ' style="background-color:lightgreen"';
       }
-      $row.append('<td'+arrowClassMapping[direction]+bgStyle+'><div class="cell-layers-container"><div class="cell-layer arrow-layer"></div><div class="cell-layer number-layer">'+numberGrid[i][j]+'</div><div class="cell-layer cell-overlay"></div></div></td>')
+
+      let tdHtml = '<td'+bgStyle+'><div class="cell-layers-container">'
+      tdHtml += '<div class="cell-layer arrow-layer">'+getArrowDivs(directions)+'</div><div class="cell-layer number-layer">'+numberGrid[i][j]+'</div><div class="cell-layer cell-overlay"></div>'
+      tdHtml += '</div></td>'
+      $row.append(tdHtml)
     }
     $table.append($row)
   }
@@ -148,7 +179,7 @@ function processMouseDownInBodyEvent(e) {
 }
 
 window.toggleArrowHighlight = function toggleArrowHighlight() {
-  $('.arrow').toggleClass('highlight-arrow');
+  $('.arrow-layer').toggleClass('highlight-arrows');
 }
 window.toggleSolution = function toggleSolution() {
   $('.sudoku-solution').toggleClass('hidden');
