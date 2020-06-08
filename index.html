@@ -7,8 +7,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.10.2/underscore.min.js"></script>
 <!-- <script type="module" src="http://localhost:8000/js/logic-solver.js"></script> -->
 <!-- <script type="module" src="http://localhost:8000/js/martinka_sudoku_generator.js"></script> -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
+integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
 <script type="module">
 import {Logic} from './js/logic-solver.js'
 console.log('Logic', Logic)
@@ -101,7 +106,6 @@ function addSolution(arrowGrid, numberGrid, islandsGrid) {
     $table.append($row)
   }
   $('.sudoku-solution').html($table)
-  $('.sudoku-solution').addClass('hidden')
 }
 
 function createMartinkaSudokuTables(m) {
@@ -145,9 +149,6 @@ function processMouseDownInBodyEvent(e) {
 window.toggleArrowHighlight = function toggleArrowHighlight() {
   $('.arrow-layer').toggleClass('highlight-arrows');
 }
-window.toggleSolution = function toggleSolution() {
-  $('.sudoku-solution').toggleClass('hidden');
-}
 
 function processKeypressInBodyEvent(e) {
   selectedCells.forEach(function($cell) {
@@ -165,16 +166,57 @@ window.bodyInit = function bodyInit() {
 </head>
 <body onload="bodyInit()">
 
-<div>
-<button onclick="newMartinkaSudoku()">Create new sudoku</button>
-<button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
-<button onclick="toggleSolution()">Toggle solution</button>
+<div class="row">
+<div class="col-8 offset-2">
+
+<div class="row">
+<div class="col">
+<h1>Extended Martinka Sudoku</h1>
+</div>
 </div>
 
-<div class="sudoku-puzzle">
+<div class="row">
+<div class="col">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="puzzle-tab" data-toggle="tab" href="#puzzle" role="tab" aria-controls="puzzle" aria-selected="true">Puzzle</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="solution-tab" data-toggle="tab" href="#solution" role="tab" aria-controls="solution" aria-selected="false">Solution</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="rules-tab" data-toggle="tab" href="#rules" role="tab" aria-controls="rules" aria-selected="false">Rules</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="about-tab" data-toggle="tab" href="#about" role="tab" aria-controls="about" aria-selected="false">About</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="puzzle" role="tabpanel" aria-labelledby="puzzle-tab">
+    <div>
+      <button onclick="newMartinkaSudoku()">Create new sudoku</button>
+      <button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+    </div>
+    <div class="sudoku-puzzle">
+    </div>
+  </div>
+  <div class="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
+    <div class="sudoku-solution">
+    </div>
+  </div>
+  <div class="tab-pane fade" id="rules" role="tabpanel" aria-labelledby="rules-tab">
+    <h1>TODO</h1>
+  </div>
+  <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+    <h1>TODO</h1>
+  </div>
 </div>
-<div class="sudoku-solution hidden">
 </div>
+</div>
+
+</div>
+</div>
+
 
 </body>
 </html>
