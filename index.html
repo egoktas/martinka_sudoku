@@ -168,6 +168,7 @@ window.bodyInit = function bodyInit() {
 </head>
 <body onload="bodyInit()">
 
+<div class="container-fluid">
 <div class="row">
 <div class="col-8 offset-2">
 
@@ -195,15 +196,27 @@ window.bodyInit = function bodyInit() {
 </ul>
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="puzzle" role="tabpanel" aria-labelledby="puzzle-tab">
-    <div>
-      <button onclick="newMartinkaSudoku()">Create new sudoku</button>
-      <button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
-    </div>
-    <div class="sudoku-puzzle">
+    <div class="row">
+      <div class="col-3">
+        <button onclick="newMartinkaSudoku()">Create new sudoku</button>
+        <button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+      </div>
+      <div class="col-9">
+        <div class="sudoku-puzzle">
+        </div>
+      </div>
     </div>
   </div>
   <div class="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
-    <div class="sudoku-solution">
+    <div class="row">
+      <div class="col-3">
+        <button onclick="newMartinkaSudoku()">Create new sudoku</button>
+        <button onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+      </div>
+      <div class="col-9">
+        <div class="sudoku-solution">
+        </div>
+      </div>
     </div>
   </div>
   <div class="tab-pane fade" id="rules" role="tabpanel" aria-labelledby="rules-tab">
@@ -218,7 +231,7 @@ window.bodyInit = function bodyInit() {
 
 </div>
 </div>
-
+</div>
 
 </body>
 </html>

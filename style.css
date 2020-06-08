@@ -2,7 +2,7 @@
   border: 3px solid black;
   border-collapse: collapse;
   text-align: center;
-  font-size: 26pt;
+  font-size: 43pt;
   user-select: none;
 }
 
@@ -20,8 +20,8 @@
 }
 
 .sudoku-table tr td div.cell-layers-container {
-  width: 42pt;
-  height: 42pt;
+  width: 50pt;
+  height: 50pt;
   position: relative;
 }
 
@@ -30,8 +30,8 @@
 }
 
 .sudoku-table tr td div.cell-layer, .sudoku-table tr td div.arrow, .sudoku-table tr td div.arrow-corner {
-  width: 42pt;
-  height: 42pt;
+  width: 50pt;
+  height: 50pt;
   position: absolute;
   top: 0;
   left: 0;
@@ -48,44 +48,44 @@
 .sudoku-table tr td div.arrow {
   background-image: url('./img/arrow-up.svg');
   background-repeat: no-repeat;
-  background-position-x: 10pt;
-  background-position-y: -1pt;
-  background-size: 11pt;
+  background-position-x: 18.3pt;
+  background-position-y: 0pt;
+  background-size: 14pt;
 }
 .sudoku-table tr td div.highlight-arrows div.arrow {
   background-color: red;
   background-image: none;
   -webkit-mask-image: url('./img/arrow-up.svg');
   -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position-x: 7pt;
-  -webkit-mask-position-y: -2pt;
-  -webkit-mask-size: 17pt;
+  -webkit-mask-position-x: 13pt;
+  -webkit-mask-position-y: -3pt;
+  -webkit-mask-size: 24pt;
   mask-image: url('./img/arrow-up.svg');
   mask-repeat: no-repeat;
-  mask-position-x: 7pt;
-  mask-position-y: -2pt;
-  mask-size: 17pt;
+  mask-position-x: 13pt;
+  mask-position-y: -3pt;
+  mask-size: 24pt;
 }
 .sudoku-table tr td div.arrow-corner {
   background-image: url('./img/arrow-up-right.svg');
   background-repeat: no-repeat;
-  background-position-x: 20pt;
+  background-position-x: 36pt;
   background-position-y: -1pt;
-  background-size: 11pt;
+  background-size: 15pt;
 }
 .sudoku-table tr td div.highlight-arrows div.arrow-corner {
   background-color: red;
   background-image: none;
   -webkit-mask-image: url('./img/arrow-up-right.svg');
   -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position-x: 16pt;
-  -webkit-mask-position-y: -3pt;
-  -webkit-mask-size: 17pt;
+  -webkit-mask-position-x: 28pt;
+  -webkit-mask-position-y: -5pt;
+  -webkit-mask-size: 27pt;
   mask-image: url('./img/arrow-up-right.svg');
   mask-repeat: no-repeat;
-  mask-position-x: 16pt;
-  mask-position-y: -3pt;
-  mask-size: 17pt;
+  mask-position-x: 28pt;
+  mask-position-y: -5pt;
+  mask-size: 27pt;
 }
 
 .sudoku-table tr td div.arrow-up {    transform: rotate(  0deg); }
