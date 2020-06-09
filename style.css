@@ -35,6 +35,13 @@ div .bg-violet {
   background-color: violet;
 }
 
+.sudoku-tinyurl-container {
+  margin-bottom: 60pt;
+}
+.sudoku-tinyurl {
+  font-size: smaller;
+}
+
 .sudoku-table {
   border: 3px solid black;
   border-collapse: collapse;

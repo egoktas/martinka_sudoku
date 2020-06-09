@@ -123,6 +123,7 @@ function createMartinkaSudokuTables(m) {
   addPuzzle(m.martinka_sudoku)
   addSolution(m.martinka_sudoku, m.solution.numbers, m.solution.islands)
 
+  setTinyurl()
   console.log('generated new sudoku')
 }
 
@@ -172,6 +173,12 @@ window.clearColor = function clearColor() {
   selectedCells.forEach(function(cell) {
     $(cell).removeClass()
   })
+}
+
+window.setTinyurl = function setTinyurl() {
+  $.get("https://tinyurl.com/api-create.php?url="+encodeURIComponent(window.location), function(shorturl){
+    $('.sudoku-tinyurl').html(shorturl)
+  });
 }
 
 window.showSolution = function showSolution() {
@@ -285,6 +292,9 @@ window.bodyInit = function bodyInit() {
       <div class="sudoku-controls-container float-left">
         <div class="sudoku-controls">
           <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku(false)">Create new sudoku</button>
+          <div class="sudoku-tinyurl-container">
+            <p>Sudoku tinyurl:<br/><span class="sudoku-tinyurl">none</span></p>
+          </div>
           <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
           <button type="button" class="btn btn-info btn-block" onclick="clearColor()">Clear color</button>
           <div class="color-buttons mt-2">
