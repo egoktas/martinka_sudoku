@@ -126,9 +126,15 @@ function createMartinkaSudokuTables(m) {
   console.log('generated new sudoku')
 }
 
-window.newMartinkaSudoku = function newMartinkaSudoku() {
+window.newMartinkaSudoku = function newMartinkaSudoku(replace) {
   console.log("Logic", Logic)
-  createMartinkaSudokuTables(find_martinka_sudoku_min_arrows(27));
+  let martinkaSudoku = find_martinka_sudoku_min_arrows(27)
+  if (replace) {
+    history.replaceState(null,'', '?sudoku='+btoa(JSON.stringify(martinkaSudoku)))
+  } else {
+    history.pushState(null,'', '?sudoku='+btoa(JSON.stringify(martinkaSudoku)))
+  }
+  createMartinkaSudokuTables(martinkaSudoku);
 }
 
 function processMouseDownInCellEvent(e) {
@@ -185,6 +191,41 @@ function processKeypressInBodyEvent(e) {
   })
 }
 
+function getSudokuFromUrl() {
+  let base64Sudoku = new URLSearchParams(window.location.search).get("sudoku")
+  if (!base64Sudoku) {
+    return null
+  }
+
+  let martinkaSudokuJsonString
+  try {
+    martinkaSudokuJsonString = atob(base64Sudoku)
+  } catch (e) {
+    console.log("atob failed")
+    return null
+  }
+
+  let martinkaSudoku
+  try {
+    martinkaSudoku = JSON.parse(martinkaSudokuJsonString)
+  } catch (e) {
+    console.log("JSON.parse failed")
+    return null
+  }
+
+  return martinkaSudoku
+}
+
+function loadMartinkaSudoku() {
+  console.trace()
+  let sudokuFromUrl = getSudokuFromUrl()
+  if (sudokuFromUrl) {
+    createMartinkaSudokuTables(sudokuFromUrl)
+  } else {
+    newMartinkaSudoku(true)
+  }
+}
+
 window.bodyInit = function bodyInit() {
   $(".color-buttons button").click(setCellColor)
 
@@ -192,8 +233,11 @@ window.bodyInit = function bodyInit() {
   $("body").on("mousedown", processMouseDownInBodyEvent)
 
   $(document).keypress(processKeypressInBodyEvent);
+  $(window).on("popstate", function () {
+    loadMartinkaSudoku()
+  });
 
-  newMartinkaSudoku()
+  loadMartinkaSudoku()
 }
 </script>
 </head>
@@ -229,7 +273,7 @@ window.bodyInit = function bodyInit() {
   <div class="tab-pane fade show active" id="puzzle" role="tabpanel" aria-labelledby="puzzle-tab">
       <div class="sudoku-controls-container float-left">
         <div class="sudoku-controls">
-          <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku()">Create new sudoku</button>
+          <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku(false)">Create new sudoku</button>
           <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
           <button type="button" class="btn btn-info btn-block" onclick="clearColor()">Clear color</button>
 <!--
