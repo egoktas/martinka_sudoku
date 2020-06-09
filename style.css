@@ -1,9 +1,38 @@
 .sudoku-container {
   padding: 5px;
+  width: calc(100% - 150pt);
+}
+
+.sudoku-controls-container {
+  width: 150pt;
 }
 
 .sudoku-controls {
   padding: 5px;
+}
+
+.sudoku-controls .color-buttons-row button {
+  width: 42pt;
+  height: 42pt;
+}
+
+div .bg-skyblue {
+  background-color: skyblue;
+}
+div .bg-lightgreen {
+  background-color: lightgreen;
+}
+div .bg-pink {
+  background-color: pink;
+}
+div .bg-lightcoral {
+  background-color: lightcoral;
+}
+div .bg-tan {
+  background-color: tan;
+}
+div .bg-violet {
+  background-color: violet;
 }
 
 .sudoku-table {
@@ -33,7 +62,7 @@
   position: relative;
 }
 
-.sudoku-table tr td div.cell-layers-container.cell-selected {
+.sudoku-table tr td.cell-selected div.cell-layers-container {
   background-color: gold;
 }
 

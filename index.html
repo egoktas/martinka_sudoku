@@ -34,15 +34,15 @@ var selectedCells = new Set()
 var selectCellOnHover = false
 
 function clearSelectedCells() {
-  selectedCells.forEach(function($cell) {
-    $cell.removeClass('cell-selected')
+  selectedCells.forEach(function(cell) {
+    $(cell).removeClass('cell-selected')
   })
   selectedCells.clear()
 }
 
 function addToSelectedCells($cell) {
   $cell.addClass('cell-selected')
-  selectedCells.add($cell)
+  selectedCells.add($cell[0])
 }
 
 function getArrowDivs(directions) {
@@ -134,15 +134,15 @@ window.newMartinkaSudoku = function newMartinkaSudoku() {
 function processMouseDownInCellEvent(e) {
   e.stopPropagation()
   selectCellOnHover = true
-  let $layersContainer = $(e.currentTarget).find('.cell-layers-container')
+  let $cell = $(e.currentTarget)
   clearSelectedCells()
-  addToSelectedCells($layersContainer)
+  addToSelectedCells($cell)
 }
 
 function processHoverCellEvent(e) {
   if (!selectCellOnHover) return
-  let $layersContainer = $(e.currentTarget).find('.cell-layers-container')
-  addToSelectedCells($layersContainer)
+  let $cell = $(e.currentTarget)
+  addToSelectedCells($cell)
 }
 
 function processMouseUpInBodyEvent(e) {
@@ -151,7 +151,10 @@ function processMouseUpInBodyEvent(e) {
 }
 
 function processMouseDownInBodyEvent(e) {
-  let $target = $(e.target)
+  if ($(e.target).is(":button")) {
+    return
+  }
+
   clearSelectedCells()
 }
 
@@ -159,13 +162,32 @@ window.toggleArrowHighlight = function toggleArrowHighlight() {
   $('.arrow-layer').toggleClass('highlight-arrows');
 }
 
+window.clearColor = function clearColor() {
+  selectedCells.forEach(function(cell) {
+    $(cell).removeClass()
+  })
+}
+
+function setCellColor(e) {
+  let $btn = $(e.target)
+  let bgColorClass = $btn.data('bg-color-class')
+
+  selectedCells.forEach(function(cell) {
+    $(cell).removeClass().addClass(bgColorClass)
+  })
+
+  selectedCells.clear()
+}
+
 function processKeypressInBodyEvent(e) {
-  selectedCells.forEach(function($cell) {
-    $cell.find('.number-layer').html(String.fromCharCode(e.charCode))
+  selectedCells.forEach(function(cell) {
+    $(cell).find('.number-layer').html(String.fromCharCode(e.charCode))
   })
 }
 
 window.bodyInit = function bodyInit() {
+  $(".color-buttons button").click(setCellColor)
+
   $("body").on("mouseup", processMouseUpInBodyEvent)
   $("body").on("mousedown", processMouseDownInBodyEvent)
 
@@ -205,18 +227,33 @@ window.bodyInit = function bodyInit() {
 </ul>
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="puzzle" role="tabpanel" aria-labelledby="puzzle-tab">
-    <div class="row">
-      <div class="col-3">
+      <div class="sudoku-controls-container float-left">
         <div class="sudoku-controls">
           <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku()">Create new sudoku</button>
           <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+          <button type="button" class="btn btn-info btn-block" onclick="clearColor()">Clear color</button>
+<!--
+          <button type="button" class="btn btn-info btn-block btn-show-solution" onclick="showSolution()">Show solution</button>
+          <button type="button" class="btn btn-info btn-block btn-hide-solution d-none" onclick="hideSolution()">Hide solution</button>
+-->
+          <div class="color-buttons mt-2">
+            <div class="color-buttons-row d-flex justify-content-between bd-highlight mb-2">
+              <button type="button" class="btn bg-skyblue" data-bg-color-class="bg-skyblue"></button>
+              <button type="button" class="btn bg-lightgreen" data-bg-color-class="bg-lightgreen"></button>
+              <button type="button" class="btn bg-pink" data-bg-color-class="bg-pink"></button>
+            </div>
+            <div class="color-buttons-row d-flex justify-content-between bd-highlight mb-2">
+              <button type="button" class="btn bg-lightcoral" data-bg-color-class="bg-lightcoral"></button>
+              <button type="button" class="btn bg-tan" data-bg-color-class="bg-tan"></button>
+              <button type="button" class="btn bg-violet" data-bg-color-class="bg-violet"></button>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-9 sudoku-container">
+      <div class="sudoku-container float-left">
         <div class="sudoku-puzzle">
         </div>
       </div>
-    </div>
   </div>
   <div class="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
     <div class="row">
