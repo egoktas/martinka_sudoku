@@ -174,6 +174,20 @@ window.clearColor = function clearColor() {
   })
 }
 
+window.showSolution = function showSolution() {
+  $('.sudoku-puzzle').addClass('d-none')
+  $('.sudoku-solution').removeClass('d-none')
+  $('.btn-hide-solution').removeClass('d-none')
+  $('.btn-show-solution').addClass('d-none')
+}
+
+window.hideSolution = function hideSolution() {
+  $('.sudoku-puzzle').removeClass('d-none')
+  $('.sudoku-solution').addClass('d-none')
+  $('.btn-hide-solution').addClass('d-none')
+  $('.btn-show-solution').removeClass('d-none')
+}
+
 function setCellColor(e) {
   let $btn = $(e.target)
   let bgColorClass = $btn.data('bg-color-class')
@@ -260,9 +274,6 @@ window.bodyInit = function bodyInit() {
     <a class="nav-link active" id="puzzle-tab" data-toggle="tab" href="#puzzle" role="tab" aria-controls="puzzle" aria-selected="true">Puzzle</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="solution-tab" data-toggle="tab" href="#solution" role="tab" aria-controls="solution" aria-selected="false">Solution</a>
-  </li>
-  <li class="nav-item">
     <a class="nav-link" id="rules-tab" data-toggle="tab" href="#rules" role="tab" aria-controls="rules" aria-selected="false">Rules</a>
   </li>
   <li class="nav-item">
@@ -276,10 +287,6 @@ window.bodyInit = function bodyInit() {
           <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku(false)">Create new sudoku</button>
           <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
           <button type="button" class="btn btn-info btn-block" onclick="clearColor()">Clear color</button>
-<!--
-          <button type="button" class="btn btn-info btn-block btn-show-solution" onclick="showSolution()">Show solution</button>
-          <button type="button" class="btn btn-info btn-block btn-hide-solution d-none" onclick="hideSolution()">Hide solution</button>
--->
           <div class="color-buttons mt-2">
             <div class="color-buttons-row d-flex justify-content-between bd-highlight mb-2">
               <button type="button" class="btn bg-skyblue" data-bg-color-class="bg-skyblue"></button>
@@ -292,26 +299,16 @@ window.bodyInit = function bodyInit() {
               <button type="button" class="btn bg-violet" data-bg-color-class="bg-violet"></button>
             </div>
           </div>
+          <button type="button" class="btn btn-info btn-block btn-show-solution" style="margin-top: 100pt" onclick="showSolution()">Show solution</button>
+          <button type="button" class="btn btn-info btn-block btn-hide-solution d-none" style="margin-top: 100pt" onclick="hideSolution()">Hide solution</button>
         </div>
       </div>
       <div class="sudoku-container float-left">
         <div class="sudoku-puzzle">
         </div>
-      </div>
-  </div>
-  <div class="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="solution-tab">
-    <div class="row">
-      <div class="col-3">
-        <div class="sudoku-controls">
-          <button type="button" class="btn btn-info btn-block" onclick="newMartinkaSudoku()">Create new sudoku</button>
-          <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+        <div class="sudoku-solution d-none">
         </div>
       </div>
-      <div class="col-9 sudoku-container">
-        <div class="sudoku-solution">
-        </div>
-      </div>
-    </div>
   </div>
   <div class="tab-pane fade" id="rules" role="tabpanel" aria-labelledby="rules-tab">
     <h1>TODO</h1>
