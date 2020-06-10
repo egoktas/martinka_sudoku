@@ -23,6 +23,9 @@ integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
 integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
 <script type="module">
 import {Logic} from './js/logic-solver.js'
 console.log('Logic', Logic)
@@ -32,6 +35,7 @@ console.log('find_martinka_sudoku_min_arrows', find_martinka_sudoku_min_arrows)
 
 var selectedCells = new Set()
 var selectCellOnHover = false
+var notesEnabled = false
 
 function clearSelectedCells() {
   selectedCells.forEach(function(cell) {
@@ -77,13 +81,19 @@ function getArrowDivs(directions) {
 }
 
 function addPuzzle(ms) {
+  let notesLayer = '<div class="notes-layer d-flex flex-wrap justify-content-center">'
+  for (var i = 1; i <= 9; i++) {
+    notesLayer += '<div class="d-none note-digit" data-note-digit="'+String(i)+'">'+String(i)+'</div>'
+  }
+  notesLayer += '</div>'
+
   let $table = $('<table class="sudoku-table" align="center" />')
   for (var i = 0; i < 9; i++) {
     let $row = $('<tr/>')
     for (var j = 0; j < 9; j++) {
       let directions = ms[i][j]
       let tdHtml = '<td><div class="cell-layers-container">'
-      tdHtml += '<div class="cell-layer arrow-layer">'+getArrowDivs(directions)+'</div><div class="cell-layer number-layer"></div><div class="cell-layer cell-overlay"></div>'
+      tdHtml += '<div class="cell-layer arrow-layer">'+getArrowDivs(directions)+'</div>'+notesLayer+'<div class="cell-layer number-layer"></div><div class="cell-layer cell-overlay"></div>'
       tdHtml += '</div></td>'
       $row.append(tdHtml)
     }
@@ -169,6 +179,14 @@ window.toggleArrowHighlight = function toggleArrowHighlight() {
   $('.arrow-layer').toggleClass('highlight-arrows');
 }
 
+window.clearDigit = function clearDigit() {
+  selectedCells.forEach(function(cell) {
+    let $cell = $(cell)
+    $cell.find('.cell-layers-container').removeClass('number-entered')
+    $cell.find('.number-layer').html('')
+  })
+}
+
 window.clearColor = function clearColor() {
   selectedCells.forEach(function(cell) {
     $(cell).removeClass()
@@ -207,8 +225,18 @@ function setCellColor(e) {
 }
 
 function processKeypressInBodyEvent(e) {
+  if (e.charCode < 49 || e.charCode > 57) {
+    return
+  }
+
   selectedCells.forEach(function(cell) {
-    $(cell).find('.number-layer').html(String.fromCharCode(e.charCode))
+    let $cell = $(cell)
+    if (notesEnabled) {
+      $cell.find('.note-digit[data-note-digit="'+String.fromCharCode(e.charCode)+'"]').toggleClass('d-none')
+    } else {
+      $cell.find('.cell-layers-container').addClass('number-entered')
+      $cell.find('.number-layer').html(String.fromCharCode(e.charCode))
+    }
   })
 }
 
@@ -247,6 +275,10 @@ function loadMartinkaSudoku() {
   }
 }
 
+function toggleNotes() {
+  notesEnabled = $('#notes-checkbox').prop('checked')
+}
+
 window.bodyInit = function bodyInit() {
   $(".color-buttons button").click(setCellColor)
 
@@ -257,6 +289,8 @@ window.bodyInit = function bodyInit() {
   $(window).on("popstate", function () {
     loadMartinkaSudoku()
   });
+
+  $('#notes-checkbox').change(toggleNotes);
 
   loadMartinkaSudoku()
 }
@@ -296,7 +330,11 @@ window.bodyInit = function bodyInit() {
             <p>Sudoku tinyurl:<br/><span class="sudoku-tinyurl">none</span></p>
           </div>
           <button type="button" class="btn btn-info btn-block" onclick="toggleArrowHighlight()">Toggle arrow highlight</button>
+          <button type="button" class="btn btn-info btn-block" onclick="clearDigit()">Clear digit</button>
           <button type="button" class="btn btn-info btn-block" onclick="clearColor()">Clear color</button>
+          <div class="mt-2 notes-checkbox-container">
+            <input id="notes-checkbox" type="checkbox" data-toggle="toggle" data-on="Notes ON" data-off="Notes OFF" data-onstyle="success" data-offstyle="danger" data-width="100%"/>
+          </div>
           <div class="color-buttons mt-2">
             <div class="color-buttons-row d-flex justify-content-between bd-highlight mb-2">
               <button type="button" class="btn bg-skyblue" data-bg-color-class="bg-skyblue"></button>

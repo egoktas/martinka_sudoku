@@ -73,6 +73,24 @@ div .bg-violet {
   background-color: gold;
 }
 
+.notes-layer{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  width: 30pt;
+  font-size: 8pt;
+}
+
+.notes-layer .note-digit {
+  width: 10pt;
+}
+
+.cell-layers-container.number-entered .notes-layer .note-digit {
+  display: none;
+}
+
 .sudoku-table tr td div.cell-layer, .sudoku-table tr td div.arrow, .sudoku-table tr td div.arrow-corner {
   width: 50pt;
   height: 50pt;
@@ -140,3 +158,9 @@ div .bg-violet {
 .sudoku-table tr td div.arrow-right-down { transform: rotate( 90deg); }
 .sudoku-table tr td div.arrow-left-down {  transform: rotate(180deg); }
 .sudoku-table tr td div.arrow-left-up {    transform: rotate(-90deg); }
+
+.btn.btn-default {
+  color: #212529;
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+}
