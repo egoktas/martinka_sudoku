@@ -486,6 +486,138 @@ function count_non_zeros(arrowGrid) {
   return count
 }
 
+// TODO use this function also for arrow detection
+function count_cell_kind_in_direction(row, col, direction, cellKind, islandsGrid) {
+  var count = 0
+  for (var i = row+direction.r, j = col+direction.c;
+        i >= 0 && i < SUDOKU_DIMENSION_SIZE && j >= 0 && j < SUDOKU_DIMENSION_SIZE;
+        i += direction.r, j += direction.c) {
+    if (islandsGrid[i][j] == cellKind) {
+      count += 1
+    }
+  }
+  return count
+}
+
+function get_higher_digits_placements(gridVars, islandsSet, islandsGrid) {
+  // set 5-8 digits, starting from 8
+
+  var cellToIslandsMapping = {}
+  islandsSet.forEach(function(island) {
+    island.forEach(function(cell) {
+      cellToIslandsMapping[cell] = island
+    })
+  })
+
+  var digitLocations = {};
+  for (var i = 1; i < SUDOKU_DIMENSION_SIZE; i++) {
+    digitLocations[i] = new Set();
+  }
+
+  var directions = [
+    {r:-1, c:0}, {r:-1, c:1}, {r:0, c:1}, {r:1, c:1},
+    {r:1, c:0}, {r:1, c:-1}, {r:0, c:-1}, {r:-1, c:-1}
+  ]
+
+  var cellDigitCandidates = {};
+  for (var i = 0; i < SUDOKU_DIMENSION_SIZE; i++) {
+    for (var j = 0; j < SUDOKU_DIMENSION_SIZE; j++) {
+      var cellNumber = get_cell_number(i,j)
+      cellDigitCandidates[cellNumber] = new Set();
+
+      var cellKind = islandsGrid[i][j]
+
+      for (var d = 0; d < directions.length; d++) {
+        var digitCandidate = count_cell_kind_in_direction(i, j, directions[d], cellKind, islandsGrid);
+        if (digitCandidate == 0) continue
+        //console.log(d, cellKind, i, j, digitCandidate)
+
+        digitLocations[digitCandidate].add(cellNumber)
+        cellDigitCandidates[cellNumber].add(digitCandidate)
+      }
+    }
+  }
+
+  var assumptionClause = null;
+  var atDigit = 8;
+  while (true) {
+    //console.log(atDigit, digitLocations[atDigit])
+    while (digitLocations[atDigit].size == 0 && atDigit > 0) {
+      atDigit -= 1;
+      //console.log(digitLocations[atDigit])
+      //console.log(atDigit, digitLocations[atDigit])
+    }
+    //console.log(atDigit, digitLocations[atDigit])
+
+    if (atDigit < 5) {
+      // stop condition
+      break;
+    }
+    // current digit has a possible placement
+
+    // get candidate
+    var pickedCell = getRandomItem(digitLocations[atDigit])
+    //console.log("atDigit =", atDigit)
+    //console.log("picked cell =", pickedCell)
+
+    // remove candidate from digitLocations
+    digitLocations[atDigit].delete(pickedCell)
+
+    // place - add assumption to solver/gridVars !
+    var row = Math.floor(pickedCell / SUDOKU_DIMENSION_SIZE)
+    var col = pickedCell % SUDOKU_DIMENSION_SIZE
+    if (assumptionClause) {
+      assumptionClause = Logic.and(Logic.equalBits(gridVars[row][col], Logic.constantBits(atDigit)), assumptionClause)
+    } else {
+      assumptionClause = Logic.equalBits(gridVars[row][col], Logic.constantBits(atDigit))
+    }
+
+    // remove digit from row, col, block, island
+    // for: go over cells in row
+    for (var i = 0; i < SUDOKU_DIMENSION_SIZE; i++) {
+      var rowCellNumber = get_cell_number(row, i)
+      if (cellDigitCandidates.hasOwnProperty(rowCellNumber) && cellDigitCandidates[rowCellNumber].has(atDigit)) {
+        cellDigitCandidates[rowCellNumber].delete(atDigit)
+        digitLocations[atDigit].delete(rowCellNumber)
+      }
+    }
+
+    // for: go over cells in col
+    for (var i = 0; i < SUDOKU_DIMENSION_SIZE; i++) {
+      var colCellNumber = get_cell_number(i, col)
+      if (cellDigitCandidates.hasOwnProperty(colCellNumber) && cellDigitCandidates[colCellNumber].has(atDigit)) {
+        cellDigitCandidates[colCellNumber].delete(atDigit)
+        digitLocations[atDigit].delete(colCellNumber)
+      }
+    }
+
+    // for: go over cells in block
+    var blockRowBase = row - (row % 2)
+    var blockColBase = col - (col % 2)
+    for (var i = 0; i < SUDOKU_DIMENSION_SIZE/3; i++) {
+      for (var j = 0; j < SUDOKU_DIMENSION_SIZE/3; j++) {
+        var blockCellNumber = get_cell_number(blockRowBase + i, blockColBase + j)
+        if (cellDigitCandidates.hasOwnProperty(blockCellNumber) && cellDigitCandidates[blockCellNumber].has(atDigit)) {
+          cellDigitCandidates[blockCellNumber].delete(atDigit)
+          digitLocations[atDigit].delete(blockCellNumber)
+        }
+      }
+    }
+
+    // for: go over cells in island, only if cell is land
+    if (cellToIslandsMapping.hasOwnProperty(pickedCell)) {
+      // picked cell is land
+      cellToIslandsMapping[pickedCell].forEach(function(islandCell) {
+        if (cellDigitCandidates.hasOwnProperty(islandCell) && cellDigitCandidates[islandCell].has(atDigit)) {
+          cellDigitCandidates[islandCell].delete(atDigit)
+          digitLocations[atDigit].delete(islandCell)
+        }
+      })
+    }
+  }
+  return assumptionClause
+}
+
 function generate_martinka_sudoku(minArrows) {
   var solver = new LS.Solver();
 
@@ -500,14 +632,17 @@ function generate_martinka_sudoku(minArrows) {
   add_islands_constraints(solver, gridVars, islandsSet);
   //print_sudoku_solution(solver.solve(), gridVars);
 
-  var solver_solution = solver.solve()
+  var islandsGrid = islands_to_grid(islandsSet)
+  var higherDigitsPlacements = get_higher_digits_placements(gridVars, islandsSet, islandsGrid);
+
+  //var solver_solution = solver.solve()
+  var solver_solution = solver.solveAssuming(higherDigitsPlacements)
   if (solver_solution == null) {
     console.log('out of solutions')
     return null
   }
 
   var numbersGrid = sudoku_solution_to_grid(solver_solution, gridVars)
-  var islandsGrid = islands_to_grid(islandsSet)
   var arrowGrid = create_grid_with_arrows(numbersGrid, islandsGrid)
 
   var arrowCount = count_non_zeros(arrowGrid)
