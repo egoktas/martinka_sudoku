@@ -223,6 +223,29 @@ function getWaterCellsInSquares(waterCells) {
   return waterCellsInSquares
 }
 
+function breaksFullLineOfWaterCells(landCells) {
+  // check horizontally and vertically if we have 9 consecutive cells
+  for (var i = 0; i < SUDOKU_DIMENSION_SIZE; i++) {
+    var rowOfWaterCells = true
+    var colOfWaterCells = true
+    for (var j = 0; j < SUDOKU_DIMENSION_SIZE; j++) {
+      var rowByRowCell = get_cell_number(i, j);
+      if (landCells.has(rowByRowCell)) {
+        rowOfWaterCells = false
+      }
+
+      var colByColCell = get_cell_number(j, i);
+      if (landCells.has(colByColCell)) {
+        colOfWaterCells = false
+      }
+    }
+    if (rowOfWaterCells || colOfWaterCells) {
+      return false
+    }
+  }
+  return true
+}
+
 function generate_islands() {
   // all waters connected
   // all lands distinct value
@@ -255,7 +278,7 @@ function generate_islands() {
     attempts += 1
     if (attempts % 100 == 0) console.log('attempts', attempts)
 
-    if (attempts > 200) {
+    if (attempts > 200 || breaksFullLineOfWaterCells(landCells)) {
       // restart
       landCells.forEach(function(cell) {
         waterCells.add(cell)
